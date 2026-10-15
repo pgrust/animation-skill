@@ -1,0 +1,39 @@
+import type { __SCENE__State } from "./model";
+
+export function __SCENE__Animation({ state }: { state: __SCENE__State }) {
+  const eased = 0.5 - Math.cos(Math.PI * state.transferProgress) / 2;
+  const itemX = 250 + 780 * eased;
+
+  return (
+    <svg
+      viewBox="0 0 1280 720"
+      className="animation-stage"
+      role="img"
+      aria-label="__SLUG__ technical animation"
+    >
+      <rect width="1280" height="720" fill="#080b10" />
+      <text x="64" y="82" className="headline" fill="#edf2f7">REPLACE WITH ONE CLAIM</text>
+      <text x="64" y="112" className="subtitle mono" fill="#8390a0">ILLUSTRATIVE STARTER · REPLACE SAMPLE STATE</text>
+
+      <g aria-label="Source stage">
+        <rect x="110" y="250" width="280" height="230" rx="22" fill="#111722" stroke="#2a3442" strokeWidth="2" />
+        <text x="250" y="300" textAnchor="middle" className="panel-title" fill="#edf2f7">SOURCE</text>
+      </g>
+      <g aria-label="Destination stage">
+        <rect x="890" y="250" width="280" height="230" rx="22" fill="#111722" stroke={state.completed ? "#61d6a3" : "#2a3442"} strokeWidth="2" />
+        <text x="1030" y="300" textAnchor="middle" className="panel-title" fill="#edf2f7">TARGET</text>
+        <text x="1030" y="425" textAnchor="middle" className="mono" fill="#61d6a3" fontSize="16">
+          {state.completed ? "COMMITTED" : "WAITING"}
+        </text>
+      </g>
+
+      <line x1="390" y1="365" x2="890" y2="365" stroke="#2a3442" strokeWidth="3" />
+      {state.phase !== "orient" && (
+        <g transform={`translate(${itemX} 365)`} aria-label="Moving work item">
+          <rect x="-58" y="-28" width="116" height="56" rx="12" fill="#12314a" stroke="#58b7ff" strokeWidth="2" />
+          <text x="0" y="6" textAnchor="middle" className="mono" fill="#edf2f7" fontSize="15">ITEM 01</text>
+        </g>
+      )}
+    </svg>
+  );
+}

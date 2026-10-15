@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SVG_ROOT="$ROOT/modes/svg"
+BLENDER_ROOT="$ROOT/modes/blender"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  ./animation svg install [npm arguments]
+  ./animation svg new <scene-name>
+  ./animation svg <npm-script> [script arguments]
+  ./animation blender <check|preview|timeline|final|verify|contact-sheet> [arguments]
+  ./animation blender test
+  ./animation blender new <project-name>
+  ./animation blender run <project-directory> <command> [arguments]
+
+Examples:
+  ./animation svg check
+  ./animation svg new packet-router
+  ./animation svg render:video --scene task-pipeline --profile fast --output output/task-pipeline-fast.mp4
+  ./animation blender preview 1 76 150
+  ./animation blender run projects/packet-router final
+EOF
+}
+
+if [[ $# -lt 2 ]]; then
+  usage
+  exit 2
+fi
+
+mode="$1"
+command="$2"
+shift 2
+
+case "$mode" in
+  svg)
+    cd "$SVG_ROOT"
+    if [[ "$command" == "install" ]]; then
+      exec npm install "$@"
+    fi
+    if [[ "$command" == "new" ]]; then
+      if [[ $# -ne 1 ]]; then
+        usage
+        exit 2
+      fi
+      exec node scripts/new-scene.mjs "$1"
+    fi
+    exec npm run "$command" -- "$@"
+    ;;
+  blender)
+    cd "$BLENDER_ROOT"
+    case "$command" in
+      test)
+        exec python3 -m unittest discover -s tests -v "$@"
+        ;;
+      new)
+        exec python3 scripts/new_project.py "$@"
+        ;;
+      run)
+        if [[ $# -lt 2 ]]; then
+          usage
+          exit 2
+        fi
+        project="$1"
+        project_command="$2"
+        shift 2
+        if [[ "$project" != /* ]]; then
+          project="$BLENDER_ROOT/$project"
+        fi
+        exec python3 scripts/render_project.py "$project" "$project_command" "$@"
+        ;;
+      check|preview|timeline|final|verify|contact-sheet)
+        exec templates/parallel-pipeline/render.sh "$command" "$@"
+        ;;
+      *)
+        usage
+        exit 2
+        ;;
+    esac
+    ;;
+  *)
+    usage
+    exit 2
+    ;;
+esac

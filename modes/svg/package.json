@@ -1,0 +1,36 @@
+{
+  "name": "react-svg-animation-skill",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "test": "node --test tests/*.test.ts",
+    "check": "npm run build && npm test && npm run verify:scene",
+    "new:scene": "node scripts/new-scene.mjs",
+    "verify:scene": "node scripts/verify-scene.mjs",
+    "capture": "node scripts/capture-frame.mjs",
+    "capture:checkpoints": "node scripts/capture-checkpoints.mjs",
+    "render:video": "node scripts/render-video.mjs",
+    "verify:video": "node scripts/verify-video.mjs",
+    "contact-sheet": "node scripts/contact-sheet.mjs"
+  },
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "26.3.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@vitejs/plugin-react": "6.0.5",
+    "playwright-core": "1.62.1",
+    "typescript": "7.0.2",
+    "vite": "8.2.0"
+  }
+}

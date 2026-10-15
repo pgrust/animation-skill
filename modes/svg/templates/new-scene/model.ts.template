@@ -1,0 +1,74 @@
+import type { Checkpoint, DeliveryProfile } from "../../runtime/scene";
+
+type Timing = {
+  orientEndMs: number;
+  transferEndMs: number;
+  durationMs: number;
+};
+
+const TIMING: Record<DeliveryProfile, Timing> = {
+  fast: { orientEndMs: 500, transferEndMs: 2_100, durationMs: 3_500 },
+  presenter: { orientEndMs: 1_000, transferEndMs: 4_200, durationMs: 6_800 },
+};
+
+export type __SCENE__State = {
+  timeMs: number;
+  phase: "orient" | "transfer" | "final";
+  transferProgress: number;
+  completed: boolean;
+};
+
+const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
+
+export function getDurationMs(profile: DeliveryProfile) {
+  return TIMING[profile].durationMs;
+}
+
+export function get__SCENE__State(
+  timeMs: number,
+  profile: DeliveryProfile,
+): __SCENE__State {
+  const timing = TIMING[profile];
+  const transferProgress = clamp01(
+    (timeMs - timing.orientEndMs) / (timing.transferEndMs - timing.orientEndMs),
+  );
+  return {
+    timeMs,
+    phase: timeMs < timing.orientEndMs
+      ? "orient"
+      : timeMs < timing.transferEndMs
+        ? "transfer"
+        : "final",
+    transferProgress,
+    completed: transferProgress === 1,
+  };
+}
+
+export function getCheckpoints(profile: DeliveryProfile): readonly Checkpoint[] {
+  const timing = TIMING[profile];
+  return [
+    { id: "orientation", label: "Objects established", timeMs: Math.round(timing.orientEndMs * 0.6) },
+    { id: "transfer", label: "Work in motion", timeMs: Math.round((timing.orientEndMs + timing.transferEndMs) / 2) },
+    { id: "final", label: "Final state", timeMs: timing.durationMs - 120 },
+  ];
+}
+
+export function inspect__SCENE__State(timeMs: number, profile: DeliveryProfile) {
+  return { profile, ...get__SCENE__State(timeMs, profile) };
+}
+
+export function validate__SCENE__(profile: DeliveryProfile): readonly string[] {
+  const errors: string[] = [];
+  const checkpoints = getCheckpoints(profile);
+  const durationMs = getDurationMs(profile);
+  if (checkpoints.some((checkpoint, index) =>
+    checkpoint.timeMs < 0
+    || checkpoint.timeMs >= durationMs
+    || (index > 0 && checkpoint.timeMs <= checkpoints[index - 1].timeMs))) {
+    errors.push("Checkpoints must be ordered and inside the scene duration");
+  }
+  if (!get__SCENE__State(durationMs - 1, profile).completed) {
+    errors.push("Final frame must contain the completed state");
+  }
+  return errors;
+}

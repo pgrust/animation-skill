@@ -1,0 +1,20 @@
+# __SLUG__ scene
+
+The generated geometry is a placeholder, not a recommended story. Before
+styling it, write one visible claim and replace the sample state with the real
+objects, events, owners, checkpoints, and completion condition.
+
+Register this scene in `src/scenes/index.tsx` by importing the component and
+model functions, creating one `SceneDefinition`, and adding it to `scenes`.
+The generator prints a ready-to-edit registration block.
+
+Then run:
+
+```bash
+./animation svg check
+./animation svg capture:checkpoints --scene __SLUG__ --profile fast
+./animation svg render:video --scene __SLUG__ --profile fast --output output/__SLUG__-fast.mp4
+```
+
+Review [SVG visual direction](../../../references/visual-direction.md) before
+polishing the scene.

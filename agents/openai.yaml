@@ -1,0 +1,4 @@
+interface:
+  display_name: "Animation Skill"
+  short_description: "Build verified SVG or Blender animations"
+  default_prompt: "Use $animation-skill to choose SVG or Blender mode, build a deterministic technical animation, and verify the rendered output."

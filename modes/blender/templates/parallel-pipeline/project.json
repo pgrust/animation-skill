@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "name": "parallel-pipeline",
+  "blender_version": [5, 2],
+  "timeline": {
+    "frame_start": 1,
+    "frame_end": 330,
+    "fps": 30
+  },
+  "render": {
+    "engine": "BLENDER_EEVEE",
+    "view_transform": "AgX",
+    "look": "AgX - Medium High Contrast",
+    "transparent_background": false,
+    "preview": {
+      "width": 640,
+      "height": 360,
+      "samples": 12
+    },
+    "final": {
+      "width": 1280,
+      "height": 720,
+      "samples": 32
+    }
+  },
+  "video": {
+    "crf": 18,
+    "preset": "medium",
+    "pixel_format": "yuv420p"
+  }
+}
